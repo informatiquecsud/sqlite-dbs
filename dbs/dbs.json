@@ -1,0 +1,7 @@
+{
+    "dbs": {
+        "earthquakes.db": {
+            "description": "Single table database to begin with"
+        }
+    }
+}
