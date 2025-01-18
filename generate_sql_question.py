@@ -5,6 +5,7 @@ import uuid
 db = 'earthquakes.db'
 db = 'imdb_small.db'
 db = 'ecole.db'
+db = 'films.db'
 localpath = os.path.join(os.getcwd(), 'dbs')
 path = 'https://raw.githubusercontent.com/informatiquecsud/sqlite-dbs/main/dbs/'
 debug = False
@@ -17,14 +18,19 @@ target = 'question' # one of ['demo', 'question']
 mode = 'butreq' # one of ['butreq', 'activecode']
 show_result = True
 
-question_id = ''
+question_id = 'exadb-films-requete-8'
 but_req_sql = '''
 ..  butreq::
-    Compter le nombre de professeurs qui enseignent l'une des branches suivantes: ``Mathématiques``, ``Informatique``, ``Bureautique``
+    Écrivez une requête qui affiche les films les plus récents de la base de
+        données réalisés en *France* ou en *Allemagne*
+
 ..  sql::
-    SELECT COUNT(*) AS "Nombre de professeurs"
-    FROM professeurs
-    WHERE branche in ("Informatique", "Mathématiques", "Bureautique")
+    SELECT films.titre, pays.nom, films.annee
+    FROM films
+    INNER JOIN pays ON films.codePays = pays.code
+    WHERE pays.nom in ('France', 'Allemagne')
+    ORDER BY films.annee DESC
+    LIMIT 10
 '''
 
 def parse_runestone_activecode_sql(activecode):
