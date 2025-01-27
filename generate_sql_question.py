@@ -6,11 +6,13 @@ db = 'earthquakes.db'
 db = 'imdb_small.db'
 db = 'ecole.db'
 db = 'films.db'
+db = 'population_small.db'
+db = 'chinook_tracks.db'
 localpath = os.path.join(os.getcwd(), 'dbs')
 path = 'https://raw.githubusercontent.com/informatiquecsud/sqlite-dbs/main/dbs/'
 debug = False
 
-max_assertions = 10
+max_assertions = 30
 max_output_rows = 10
 unittests = True
 hide_solution = True
@@ -18,19 +20,123 @@ target = 'question' # one of ['demo', 'question']
 mode = 'butreq' # one of ['butreq', 'activecode']
 show_result = True
 
-question_id = 'exadb-films-requete-8'
+question_id = 'db_sql_2425_B_requete_1'
 but_req_sql = '''
 ..  butreq::
-    Écrivez une requête qui affiche les films les plus récents de la base de
-        données réalisés en *France* ou en *Allemagne*
-
+    Déterminer les différentes "unités" utilisées dans la base de données en affichant toutes les différentes valeurs présentes dans la colonne `Unité`
 ..  sql::
-    SELECT films.titre, pays.nom, films.annee
-    FROM films
-    INNER JOIN pays ON films.codePays = pays.code
-    WHERE pays.nom in ('France', 'Allemagne')
-    ORDER BY films.annee DESC
-    LIMIT 10
+    SELECT DISTINCT Unité
+    FROM population
+'''
+question_id = 'db_sql_2425_B_requete_2'
+but_req_sql = '''
+..  butreq::
+    Déterminez le nombre de communes du canton du Jura (utiliser la colonne `Canton`)
+..  sql::
+    SELECT COUNT(DISTINCT nom_commune)
+    FROM population
+    WHERE canton = 'JU' and Année = 2020;
+'''
+
+
+question_id = 'db_sql_2425_B_requete_3'
+but_req_sql = '''
+..  butreq::
+    Déterminez le nom de la commune du Valais dont la population de nationalité suisse est la plus faible en 2020
+..  sql::
+    SELECT Nom_commune AS "Commune", Nombre as "Nombre de nationaux"
+    FROM population
+    WHERE canton = 'VS' and Unité = 'Nationalité - Suisse' AND Année = 2020
+    ORDER BY Nombre ASC
+    LIMIT 1
+'''
+question_id = 'db_sql_2425_B_requete_4'
+but_req_sql = '''
+..  butreq::
+    Déterminez la population étrangère moyenne par commune en 2020 pour chacun des cantons. 
+..  sql::
+    SELECT ROUND(AVG(Nombre), 0) AS "Moyenne", Canton
+    FROM population
+    WHERE Année = 2020 AND unité = 'Nationalité - Etranger'
+    GROUP BY Canton
+    ORDER BY "Moyenne" DESC
+'''
+question_id = 'db_sql_2425_B_requete_0'
+but_req_sql = '''
+..  butreq::
+    Écrivez une requête qui affiche les 10 premières lignes de la table ``population``
+..  sql::
+    SELECT * FROM population LIMIT 10;
+'''
+question_id = 'db_sql_2425_C_requete_2'
+but_req_sql = '''
+..  butreq::
+    Déterminez les noms de tous les districts suisses présents dans la base de données.
+..  sql::
+    SELECT DISTINCT Nom_district
+    FROM population
+'''
+question_id = 'db_sql_2425_C_requete_2'
+but_req_sql = '''
+..  butreq::
+    Déterminez le nom de la commune du canton de Vaud dont la population de
+    nationalité suisse est la plus faible en 2015. Faites en sorte que les
+    noms des colonnes soient indiquées dans le résultat dans l'exemple
+    (``Commune`` et ``Nombre de nationaux``)
+..  sql::
+    SELECT Nom_commune AS "Commune", Nombre as "Nombre de nationaux"
+    FROM population
+    WHERE canton = 'VD' and Unité = 'Nationalité - Suisse' AND Année = 2015
+    ORDER BY Nombre ASC
+    LIMIT 1
+'''
+question_id = 'db_sql_2425_C_requete_3'
+but_req_sql = '''
+..  butreq::
+    Déterminez, pour chaque canton, la population étrangère de la commune
+    ayant la plus grande population étrangère et celle de la commune ayant
+    la plus faible population étrangère en 2015. Triez le résultat de manière décroissante
+    en fonction de la colonne
+    indiquant la population étrangère maximale.
+..  sql::
+    SELECT Nom_canton, MAX(Nombre), MIN(Nombre)
+    FROM population
+    WHERE Unité = 'Nationalité - Etranger' AND Année = 2015 
+    GROUP BY Nom_canton
+    ORDER BY MAX(Nombre) DESC
+'''
+question_id = 'db_sql_2425_D_requete_1'
+but_req_sql = '''
+..  butreq::
+    Déterminez les noms de tous les compositeurs présents dans la table,
+    triés par ordre alphabétique croissant.
+..  sql::
+    SELECT DISTINCT Genre
+    FROM tracks
+    ORDER BY Genre
+'''
+question_id = 'db_sql_2425_D_requete_2'
+but_req_sql = '''
+..  butreq::
+    Déterminez le nombre de pistes se terminant par le mot 'Love' ou commençant par le mot 'life'
+..  sql::
+    SELECT COUNT(*) as "Nombre"
+    FROM tracks
+    WHERE name LIKE 'life%' OR name LIKE '%love'
+'''
+question_id = 'db_sql_2425_D_requete_3'
+but_req_sql = '''
+..  butreq::
+    Déterminez les noms de tous les genres de musique possédant au moins une piste 
+    dont la durée est située entre 300'000 ms et 600'000 ms. Pour chaque genre en question, 
+    affichez le nombre de pistes de ce genre ainsi que la durée moyenne des pistes en question.
+    Triez les résultats par ordre décroissant du nombre de pistes par genre.
+..  sql::
+    SELECT Genre, COUNT(*) as "Nombre de pistes", ROUND(AVG(Milliseconds), 0) as "Durée moyenne"
+    FROM tracks
+    WHERE Milliseconds > 300000 and Milliseconds < 600000
+    GROUP BY Genre
+    ORDER BY "Nombre de pistes" DESC
 '''
 
 def parse_runestone_activecode_sql(activecode):
